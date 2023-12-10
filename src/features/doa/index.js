@@ -1,32 +1,14 @@
 import { useQueryUsers } from "./service";
 // import { deleteProduct } from "@/common/query/product";
-// import AddDataForm from "./form/addDataForm";
+import AddDataForm from "./form/addDataForm";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
-  rem,
-  Modal,
-  Button,
-  ActionIcon,
-} from "@mantine/core";
-import {
-  IconSelector,
-  IconChevronDown,
-  IconChevronUp,
-  IconSearch,
-  IconEdit,
-  IconTrash,
-} from "@tabler/icons-react";
+import { Table, ScrollArea, UnstyledButton, Group, Text, Center, TextInput, rem, Modal, Button, ActionIcon } from "@mantine/core";
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch, IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./table.module.css";
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/loading";
 import { getDoa } from "../query";
+import EditDataForm from "./form/editDataForm";
 
 const DoaFeatures = () => {
   const [page, setPage] = useState(1);
@@ -46,11 +28,15 @@ const DoaFeatures = () => {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [idData, setIdData] = useState("");
+
+  const [judul, setJudul] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
+  const [ayat, setAyat] = useState("");
+  const [latin, setLatin] = useState("");
 
   useEffect(() => {
-    setSortedData(
-      sortData(doa, { sortBy, reversed: reverseSortDirection, search })
-    );
+    setSortedData(sortData(doa, { sortBy, reversed: reverseSortDirection, search }));
   }, [doa, reverseSortDirection, search, sortBy]);
 
   const setSorting = (field) => {
@@ -74,7 +60,16 @@ const DoaFeatures = () => {
 
   const onHandleDeleteData = (isOpen, id) => {
     setIsOpenDelete(isOpen);
-    setIdProduct(id);
+    setIdData(id);
+  };
+
+  const onHandleEditData = (isOpen, id, judul, deskripsi, ayat, latin) => {
+    setIsOpenEdit(isOpen);
+    setIdData(id);
+    setJudul(judul);
+    setDeskripsi(deskripsi);
+    setAyat(ayat);
+    setLatin(latin);
   };
 
   // const { mutate, isLoading: isLoadingDelete } = useMutation(deleteProduct, {
@@ -107,13 +102,10 @@ const DoaFeatures = () => {
       <td>{row.updateAt}</td>
       <td>
         <Group spacing={4} position="center" noWrap>
-          <ActionIcon color="blue" onClick={() => onHandleEditData(true, data)}>
+          <ActionIcon color="blue" onClick={() => onHandleEditData(true, row.id, row.judul, row.deskripsi, row.ayat, row.latin)}>
             <IconEdit size={16} />
           </ActionIcon>
-          <ActionIcon
-            color="red"
-            onClick={() => onHandleDeleteData(true, data.id)}
-          >
+          <ActionIcon color="red" onClick={() => onHandleDeleteData(true, row.id)}>
             <IconTrash size={16} />
           </ActionIcon>
         </Group>
@@ -123,19 +115,7 @@ const DoaFeatures = () => {
 
   return (
     <ScrollArea>
-      <TextInput
-        style={{ marginBottom: "1.5rem" }}
-        placeholder="Search by any field"
-        mb="md"
-        leftSection={
-          <IconSearch
-            style={{ width: rem(16), height: rem(16) }}
-            stroke={1.5}
-          />
-        }
-        value={search}
-        onChange={handleSearchChange}
-      />
+      <TextInput style={{ marginBottom: "1.5rem" }} placeholder="Search by any field" mb="md" leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />} value={search} onChange={handleSearchChange} />
 
       <section
         style={{
@@ -146,91 +126,55 @@ const DoaFeatures = () => {
         }}
       >
         <Text fw={700} fz="lg">
-          Product List
+          Doa List
         </Text>
-        <Button
-          variant="gradient"
-          gradient={{ from: "indigo", to: "cyan" }}
-          onClick={() => setIsOpenAdd(true)}
-        >
-          Create Products
+        <Button variant="gradient" gradient={{ from: "indigo", to: "cyan" }} onClick={() => setIsOpenAdd(true)}>
+          Create Data Doa
         </Button>
       </section>
 
-      <Table
-        style={{ margin: rem(0, 15, 0, 15) }}
-        withBorder
-        horizontalSpacing="md"
-        verticalSpacing="xs"
-        layout="fixed"
-      >
-        <tbody>
-          <tr>
-            <Th
-              sorted={sortBy === "judul"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("judul")}
-            >
-              Judul
-            </Th>
-            <Th
-              sorted={sortBy === "deskripsi"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("deskripsi")}
-            >
-              Deskripsi
-            </Th>
-            <Th
-              sorted={sortBy === "ayat"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("ayat")}
-            >
-              Ayat
-            </Th>
-            <Th
-              sorted={sortBy === "latin"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("latin")}
-            >
-              Latin
-            </Th>
-            <Th
-              sorted={sortBy === "createdAt"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("createdAT")}
-            >
-              Created At
-            </Th>
-            <Th
-              sorted={sortBy === "updatedAt"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("updatedAt")}
-            >
-              Updated At
-            </Th>
-            <Th
-              sorted={sortBy === "updatedAt"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("updatedAt")}
-            >
-              Actions
-            </Th>
-          </tr>
-        </tbody>
-        <tbody>
-          {rows?.length > 0 ? (
-            rows
-          ) : (
+      <ScrollArea h={500}>
+        <Table style={{ margin: rem(0, 15, 0, 15) }} withBorder horizontalSpacing="md" verticalSpacing="xs" layout="fixed">
+          <tbody>
             <tr>
-              <td colSpan={!isFetching ? doa.keys(doa[0]).length : ""}>
-                <Center>
-                  <Loading />
-                </Center>
-              </td>
+              <Th sorted={sortBy === "judul"} reversed={reverseSortDirection} onSort={() => setSorting("judul")}>
+                Judul
+              </Th>
+              <Th sorted={sortBy === "deskripsi"} reversed={reverseSortDirection} onSort={() => setSorting("deskripsi")}>
+                Deskripsi
+              </Th>
+              <Th sorted={sortBy === "ayat"} reversed={reverseSortDirection} onSort={() => setSorting("ayat")}>
+                Ayat
+              </Th>
+              <Th sorted={sortBy === "latin"} reversed={reverseSortDirection} onSort={() => setSorting("latin")}>
+                Latin
+              </Th>
+              <Th sorted={sortBy === "createdAt"} reversed={reverseSortDirection} onSort={() => setSorting("createdAT")}>
+                Created At
+              </Th>
+              <Th sorted={sortBy === "updatedAt"} reversed={reverseSortDirection} onSort={() => setSorting("updatedAt")}>
+                Updated At
+              </Th>
+              <Th sorted={sortBy === "updatedAt"} reversed={reverseSortDirection} onSort={() => setSorting("updatedAt")}>
+                Actions
+              </Th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </tbody>
+          <tbody>
+            {rows?.length > 0 ? (
+              rows
+            ) : (
+              <tr>
+                <td colSpan={!isFetching ? doa.keys(doa[0]).length : ""}>
+                  <Center>
+                    <Loading />
+                  </Center>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </ScrollArea>
       {/* <Modal
           opened={isOpenDelete}
           withCloseButton
@@ -254,11 +198,9 @@ const DoaFeatures = () => {
           </Group>
         </Modal> */}
 
-      {/* <AddDataForm 
-          isOpen={isOpenAdd} 
-          onClose={()=>setIsOpenAdd(false)} 
-          refetch={refetch}
-        /> */}
+      <AddDataForm isOpen={isOpenAdd} onClose={() => setIsOpenAdd(false)} refetch={refetch} />
+      
+      <EditDataForm isOpen={isOpenEdit} onClose={() => setIsOpenEdit(false)} refetch={refetch} idData={idData} judul={judul} deskripsi={deskripsi} ayat={ayat} latin={latin} />
     </ScrollArea>
   );
 };
@@ -266,11 +208,7 @@ const DoaFeatures = () => {
 export default DoaFeatures;
 
 function Th({ children, reversed, sorted, onSort }) {
-  const Icon = sorted
-    ? reversed
-      ? IconChevronUp
-      : IconChevronDown
-    : IconSelector;
+  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -289,12 +227,7 @@ function Th({ children, reversed, sorted, onSort }) {
 
 function filterData(data, search) {
   const query = search.toLowerCase().trim();
-  return data?.filter((item) =>
-    Object.keys(data[0]).some(
-      (key) =>
-        typeof item[key] === "string" && item[key].toLowerCase().includes(query)
-    )
-  );
+  return data?.filter((item) => Object.keys(data[0]).some((key) => typeof item[key] === "string" && item[key].toLowerCase().includes(query)));
 }
 
 function sortData(data, payload) {

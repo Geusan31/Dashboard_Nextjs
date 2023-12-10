@@ -10,13 +10,13 @@ export async function getProduct(id) {
   return data;
 }
 
-export async function addProduct(params) {
-  const data = await API.post(`/add-product`, params)
+export async function addDoa(params) {
+  const data = await API.post(`/doa/add-doa`, params)
   return data;
 }
 
-export async function editProduct(id,params) {
-  const data = await API.put(`/edit-product?id=${id}`, params)
+export async function editDoa(id,params) {
+  const data = await API.put(`/edit-doa?id=${id}`, params)
   return data;
 }
 

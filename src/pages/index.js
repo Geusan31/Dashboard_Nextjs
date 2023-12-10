@@ -1,14 +1,12 @@
 // pages/index.js
-
-import { DashboardLayout } from "@/components/layouts";
-import UsersFeatures from "@/features/products";
 import { useAuth } from "@/hooks/auth"; // Gunakan hook untuk pengecekan otentikasi
 import { Loading } from "@/components/loading";
 import LoginPage from "@/features/authentication";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const { user, loading } = useAuth(); // Dapatkan status otentikasi dari hook
-
+  const route = useRouter();
   // Jika sedang memuat, tampilkan pesan loading
   if (loading) {
     return <Loading />;
@@ -17,12 +15,7 @@ export default function Home() {
   // Jika pengguna belum login, tampilkan halaman login
   if (!user) {
     return <LoginPage />;
+  } else {
+    route.push("/dashboard");
   }
-
-  // Jika pengguna sudah login, arahkan ke halaman dashboard
-  return <UsersFeatures />;
 }
-
-Home.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};

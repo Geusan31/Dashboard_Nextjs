@@ -1,26 +1,25 @@
-import { useState } from 'react';
-import { Group, Code, rem } from '@mantine/core';
-import {
-  IconSettings,
-  IconSwitchHorizontal,
-  IconLogout,
-  IconBuildingStore,
-  IconCategory,
-  IconUser,
-  IconCopy,
-} from '@tabler/icons-react';
-import { MantineLogo } from '@mantine/ds';
-import classes from './sidebar.module.css';
+import { useState } from "react";
+import { Group, Code, rem } from "@mantine/core";
+import { IconSettings, IconSwitchHorizontal, IconLogout, IconBuildingStore, IconCategory, IconUser, IconCopy } from "@tabler/icons-react";
+import { MantineLogo } from "@mantine/ds";
+import classes from "./sidebar.module.css";
+import { useRouter } from "next/router";
 
 const data = [
-  { link: '/', label: 'User', icon: IconBuildingStore },
-  { link: '/category', label: 'Data Doa', icon: IconCategory },
-  { link: '#', label: 'User', icon: IconUser },
-  { link: '#', label: 'Other Settings', icon: IconSettings },
+  { link: "/", label: "User", icon: IconBuildingStore },
+  { link: "/doa", label: "Data Doa", icon: IconCategory },
+  { link: "#", label: "Other Settings", icon: IconSettings },
 ];
 
 export function Sidebar() {
-  const [active, setActive] = useState('User');
+  const router = useRouter();
+  function handleLogout(e) {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    router.push({ pathname: "/login" });
+  }
+  
+  const [active, setActive] = useState("User");
 
   const links = data.map((item) => (
     <a
@@ -53,7 +52,7 @@ export function Sidebar() {
           <span>Change account</span>
         </a>
 
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+        <a href="#" className={classes.link} onClick={(event) => handleLogout(event)}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </a>

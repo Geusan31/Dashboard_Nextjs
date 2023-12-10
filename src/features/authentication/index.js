@@ -45,7 +45,7 @@ const LoginPage = () => {
         localStorage.setItem("token", data.token);
 
         // Redirect ke halaman dashboard
-        router.reload();
+        router.push({pathname: '/'});
       } else {
         // Login gagal
         setLoginStatus("failure");

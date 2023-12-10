@@ -101,8 +101,8 @@ const UsersFeatures = () => {
     <tr key={row.id}>
       <td>{row.nama}</td>
       <td>{row.username}</td>
-      <td>{row.createdAt}</td>
-      <td>{row.updatedAt}</td>
+      <td>{row.createAt}</td>
+      <td>{row.updateAt}</td>
       <td>
         <Group spacing={4} position="center" noWrap>
           <ActionIcon color="blue" onClick={() => onHandleEditData(true, data)}>

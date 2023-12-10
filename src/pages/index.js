@@ -16,7 +16,3 @@ export default function Home() {
     </>
   );
 }
-
-Home.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
